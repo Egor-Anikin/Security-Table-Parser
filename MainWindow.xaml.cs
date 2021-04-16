@@ -14,16 +14,18 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ExcelDataReader;
+using System.Data;
 
 namespace SecurityTableParser
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        int recordsCountInPage = 20;
 
-        string localBaseFileFullPath = @"data.txt";
         public MainWindow()
         {
             InitializeComponent();
@@ -31,19 +33,7 @@ namespace SecurityTableParser
 
             try
             {
-                if (new FileInfo(localBaseFileFullPath).Exists)
-                {
-                    dataDisplay();
-                    //threatsList = GetDataFromLocalStorage();
-                    //dataGrid.ItemsSource = threatsList.Take(numberOfRecPerPage);
-                    //int count = threatsList.Take(numberOfRecPerPage).Count();
-                    //lblpageInformation.Content = count + " of " + threatsList.Count;
-                }
-                else
-                {
-                    download();
-                    //save();
-                }
+                download();
             }
             catch (Exception ex)
             {
@@ -53,7 +43,38 @@ namespace SecurityTableParser
 
         private void dataDisplay()
         {
+            var records = new List<Record>();
+            using (var stream = File.Open("thrlist.xlsx", FileMode.Open, FileAccess.Read))
+            {
+                using (IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    DataSet dataSet = reader.AsDataSet(new ExcelDataSetConfiguration()
+                    {
+                        ConfigureDataTable = (_) => new ExcelDataTableConfiguration() { UseHeaderRow = true }
+                    });
+                    DataTableCollection tableCollection = dataSet.Tables;
+                    DataTable dataTable = tableCollection[0];
 
+                    for (int i = 1; i < dataTable.Rows.Count; i++)
+                    {
+                        var record = new Record();
+                        Object[] itemArray = dataTable.Rows[i].ItemArray;
+                        record.Id = "УБИ." + itemArray[0].ToString();
+                        record.Name = itemArray[1].ToString();
+                        record.Description = itemArray[2].ToString();
+                        record.Source = itemArray[3].ToString();
+                        record.Destination = itemArray[4].ToString();
+                        record.PrivacyViolation = itemArray[5].ToString().Equals("1") ? true : false;
+                        record.IntegrityViolation = itemArray[6].ToString().Equals("1") ? true : false;
+                        record.AccessViolation = itemArray[7].ToString().Equals("1") ? true : false;
+
+                        records.Add(record);
+                    }
+                }
+            }
+
+            dataGrid.ItemsSource = records.Take(recordsCountInPage);
+            pageInfo.Content = "1 - " + recordsCountInPage + " / " + records.Count;
         }
 
         private void download()
