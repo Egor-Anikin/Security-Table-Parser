@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,10 +22,90 @@ namespace SecurityTableParser
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        string localBaseFileFullPath = @"data.txt";
         public MainWindow()
         {
             InitializeComponent();
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+
+            try
+            {
+                if (new FileInfo(localBaseFileFullPath).Exists)
+                {
+                    dataDisplay();
+                    //threatsList = GetDataFromLocalStorage();
+                    //dataGrid.ItemsSource = threatsList.Take(numberOfRecPerPage);
+                    //int count = threatsList.Take(numberOfRecPerPage).Count();
+                    //lblpageInformation.Content = count + " of " + threatsList.Count;
+                }
+                else
+                {
+                    download();
+                    //save();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
+
+        private void dataDisplay()
+        {
+
+        }
+
+        private void download()
+        {
+            try
+            {
+                string url = "https://bdu.fstec.ru/files/documents/thrlist.xlsx";
+
+                using (var client = new WebClient())
+                {
+                    try
+                    {
+                        client.DownloadFile(url, "thrlist.xlsx");
+                        MessageBox.Show("Загрузка данных завершена");
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message);
+                    }
+                }
+
+                dataDisplay();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+
+        private void save()
+        {
+
+        }
+
+
+
+        private void btnDownload_Click(object sender, RoutedEventArgs e)
+        {
+            download();
+        }
+
+        private void btnView_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
 
         private void btnFirst_Click(object sender, RoutedEventArgs e)
         {
@@ -41,21 +123,6 @@ namespace SecurityTableParser
         }
 
         private void btnLast_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnDownload_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnView_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnSave_Click(object sender, RoutedEventArgs e)
         {
 
         }
