@@ -24,7 +24,9 @@ namespace SecurityTableParser
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<Record> records = new List<Record>();
         int recordsCountInPage = 20;
+        string localBase = @"data.txt";
 
         public MainWindow()
         {
@@ -43,7 +45,6 @@ namespace SecurityTableParser
 
         private void dataDisplay()
         {
-            var records = new List<Record>();
             using (var stream = File.Open("thrlist.xlsx", FileMode.Open, FileAccess.Read))
             {
                 using (IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream))
@@ -73,7 +74,7 @@ namespace SecurityTableParser
                 }
             }
 
-            dataGrid.ItemsSource = records.Take(recordsCountInPage);
+            dataGrid.ItemsSource = records.GetRange(0, recordsCountInPage);
             pageInfo.Content = "1 - " + recordsCountInPage + " / " + records.Count;
         }
 
@@ -123,7 +124,31 @@ namespace SecurityTableParser
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                if (records == null || records.Count == 0)
+                {
+                    MessageBox.Show("Нет данных");
+                }
+                else
+                {
+                    using (var file = File.Create(localBase)) { }
 
+                    using (StreamWriter sw = new StreamWriter(localBase, false, System.Text.Encoding.Default))
+                    {
+                        for (int i = 0; i < records.Count - 1; i++)
+                        {
+                            sw.Write(records[i].ToString() + "$");
+                        }
+                        sw.Write(records[records.Count - 1].ToString());
+                    }
+                    MessageBox.Show("Данные сохранены в локальном хранилище");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
 
