@@ -15,6 +15,7 @@
         <Button x:Name="btnDownload" Content="Download" HorizontalAlignment="Left" Margin="120,74,0,0" VerticalAlignment="Top" Height="30" Width="80" Click="btnDownload_Click"/>
         <Button x:Name="btnView" Content="View" HorizontalAlignment="Left" Margin="400,74,0,0" VerticalAlignment="Top" Height="30" Width="80" Click="btnView_Click" RenderTransformOrigin="0.062,0.668"/>
         <Button x:Name="btnSave" Content="Save" HorizontalAlignment="Left" Margin="625,74,0,0" VerticalAlignment="Top" Height="30" Width="80" Click="btnSave_Click"/>
+        <Label x:Name="pageInfo" Content="" HorizontalAlignment="Left" Margin="520,459,0,0" VerticalAlignment="Top" Width="85"/>
 
     </Grid>
 </Window>
