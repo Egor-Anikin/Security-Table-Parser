@@ -16,7 +16,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ExcelDataReader;
 using System.Data;
-
 namespace SecurityTableParser
 {
     /// <summary>
@@ -26,6 +25,7 @@ namespace SecurityTableParser
     {
         List<Record> records = new List<Record>();
         int recordsCountInPage = 20;
+        int numPage = 1;
         string localBase = @"data.txt";
 
         public MainWindow()
@@ -35,7 +35,18 @@ namespace SecurityTableParser
 
             try
             {
-                download();
+                if (new FileInfo(localBase).Exists)
+                {
+                    parseDataFromTxt();
+                    dataDisplay();
+                }
+                else
+                {
+                    string url = "https://bdu.fstec.ru/files/documents/thrlist.xlsx";
+                    MessageBox.Show("Локального хранилища нет, данные будут загружены с" + url);
+                    records = downloadTable();
+                    dataDisplay();
+                }
             }
             catch (Exception ex)
             {
@@ -45,6 +56,74 @@ namespace SecurityTableParser
 
         private void dataDisplay()
         {
+            if(numPage == records.Count / recordsCountInPage + 1)
+            {
+                dataGrid.ItemsSource = records.GetRange((numPage - 1) * recordsCountInPage, records.Count - (numPage - 1) * recordsCountInPage);
+            }
+            else 
+            {
+                dataGrid.ItemsSource = records.GetRange((numPage - 1) * recordsCountInPage, recordsCountInPage);
+            }
+            
+            pageInfo.Content = numPage + " / " + (records.Count / recordsCountInPage + 1);
+        }
+
+        private void parseDataFromTxt()
+        {
+            using (StreamReader file = new StreamReader(localBase, Encoding.Default))
+            {
+                string data = file.ReadToEnd();
+                string[] lines = data.Split('$');
+
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    string[] threatProperties = lines[i].Split('@');
+                    var record = new Record();
+                    record.Id = threatProperties[0];
+                    record.Name = threatProperties[1];
+                    record.Description = threatProperties[2];
+                    record.Source = threatProperties[3];
+                    record.Destination = threatProperties[4];
+                    record.PrivacyViolation = threatProperties[5].Equals("1") ? true : false;
+                    record.IntegrityViolation = threatProperties[6].Equals("1") ? true : false;
+                    record.AccessViolation = threatProperties[7].Equals("1") ? true : false;
+                    records.Add(record);
+                }
+            }
+        }
+
+        private List<Record> downloadTable()
+        {
+            List<Record> result = null;
+            try
+            {
+                string url = "https://bdu.fstec.ru/files/documents/thrlist.xlsx";
+                using (var client = new WebClient())
+                {
+                    try
+                    {
+                        client.DownloadFile(url, "thrlist.xlsx");
+                        result = parseDataFromXlsx();
+                        MessageBox.Show("Загрузка данных завершена");
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message);
+                    }
+                }
+            }
+
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+
+            return result;
+        }
+
+        private List<Record> parseDataFromXlsx()
+        {
+            List<Record> result = new List<Record>();
             using (var stream = File.Open("thrlist.xlsx", FileMode.Open, FileAccess.Read))
             {
                 using (IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream))
@@ -69,56 +148,62 @@ namespace SecurityTableParser
                         record.IntegrityViolation = itemArray[6].ToString().Equals("1") ? true : false;
                         record.AccessViolation = itemArray[7].ToString().Equals("1") ? true : false;
 
-                        records.Add(record);
+                        result.Add(record);
                     }
                 }
             }
-
-            dataGrid.ItemsSource = records.GetRange(0, recordsCountInPage);
-            pageInfo.Content = "1 - " + recordsCountInPage + " / " + records.Count;
+            return result;
         }
 
-        private void download()
+        private void dataUpdate(List<Record> newRecords)
         {
-            try
+            if(newRecords == null)
             {
-                string url = "https://bdu.fstec.ru/files/documents/thrlist.xlsx";
-
-                using (var client = new WebClient())
+                return;
+            }
+            var before = new List<Record>();
+            var after = new List<Record>();
+            foreach (var item in newRecords)
+            {
+                var oldrecord = records.Find(t => t.Id == item.Id);
+                if(oldrecord == null || !oldrecord.Equals(item))
                 {
-                    try
-                    {
-                        client.DownloadFile(url, "thrlist.xlsx");
-                        MessageBox.Show("Загрузка данных завершена");
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.Show(e.Message);
-                    }
+                    before.Add(oldrecord);
+                    after.Add(item);
                 }
-
-                dataDisplay();
             }
-            catch (Exception e)
+
+            if (after.Count == 0)
             {
-                MessageBox.Show(e.Message);
+                MessageBox.Show("Изменений в данных нет");
             }
+            else
+            {
+                LogWindow logWindow = new LogWindow((before, after));
+                logWindow.Show();
+            }
+            records = newRecords;
         }
-
-        private void save()
-        {
-
-        }
-
-
 
         private void btnDownload_Click(object sender, RoutedEventArgs e)
         {
-            download();
+            
+            dataUpdate(downloadTable());
+            dataDisplay();
         }
 
         private void btnView_Click(object sender, RoutedEventArgs e)
         {
+            var record = dataGrid.SelectedItem as Record;
+            if (record == null)
+            {
+                return;
+            }
+
+            MessageBox.Show($"Данные об угрозе:\n id: {record.Id};\n name: {record.Name};\n"
+                + $"description: {record.Description};\n source: {record.Source};\n "
+                + $"destination: {record.Destination};\n privacy violation: {record.PrivacyViolation};\n"
+                + $"integrity violation: {record.IntegrityViolation};\n access violation: {record.AccessViolation};\n");
 
         }
 
@@ -155,22 +240,32 @@ namespace SecurityTableParser
 
         private void btnFirst_Click(object sender, RoutedEventArgs e)
         {
-
+            numPage = 1;
+            dataDisplay();
         }
 
         private void btnPrev_Click(object sender, RoutedEventArgs e)
         {
-
+            if(numPage != 1)
+            {
+                numPage--;
+                dataDisplay();
+            }
         }
 
         private void btnNext_Click(object sender, RoutedEventArgs e)
         {
-
+            if (numPage != records.Count / recordsCountInPage + 1)
+            {
+                numPage++;
+                dataDisplay();
+            }
         }
 
         private void btnLast_Click(object sender, RoutedEventArgs e)
         {
-
+            numPage = records.Count / recordsCountInPage + 1;
+            dataDisplay();
         }
     }
 }

@@ -42,3 +42,5 @@ D:\Desktop\Security-Table-Parser\obj\Debug\SecurityTableParser.csproj.CoreCompil
 D:\Desktop\Security-Table-Parser\obj\Debug\SecurityTableParser.csproj.CopyComplete
 D:\Desktop\Security-Table-Parser\obj\Debug\SecurityTableParser.exe
 D:\Desktop\Security-Table-Parser\obj\Debug\SecurityTableParser.pdb
+D:\Desktop\Security-Table-Parser\obj\Debug\LogWindow.g.cs
+D:\Desktop\Security-Table-Parser\obj\Debug\LogWindow.baml
