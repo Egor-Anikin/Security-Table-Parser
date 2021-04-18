@@ -5,10 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SecurityTableParser"
         mc:Ignorable="d"
-        Title="LogWindow" Height="450" Width="800">
+        Title="Security-Table-Parser" Height="450" Width="800">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="20"
+                                Background="{TemplateBinding Background}">
+
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid>
-        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Height="376" Margin="10,35,0,0" VerticalAlignment="Top" Width="773"/>
-        <Button x:Name="btnView" Content="View" HorizontalAlignment="Left" Margin="700,9,0,0" VerticalAlignment="Top" Width="75" Click="btnView_Click"/>
+        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Height="357" Margin="10,54,0,0" VerticalAlignment="Top" Width="773" IsReadOnly="True" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Id}" ClipboardContentBinding="{x:Null}" Header="id"/>
+                <DataGridTextColumn Binding="{Binding Name}" ClipboardContentBinding="{x:Null}" Header="Наименование"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button x:Name="btnView" Content="Подробности" HorizontalAlignment="Left" Margin="665,9,0,0" VerticalAlignment="Top" Width="110" Click="btnView_Click" Height="40"/>
+        <Label x:Name="label" Content="" HorizontalAlignment="Left" Margin="225,5,0,0" VerticalAlignment="Top" RenderTransformOrigin="-2.096,-9.051" Width="340" Height="44" FontSize="20"/>
 
     </Grid>
 </Window>
