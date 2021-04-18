@@ -23,6 +23,7 @@ namespace SecurityTableParser
     /// </summary>
     public partial class MainWindow : Window
     {
+        
         List<Record> records = new List<Record>();
         int recordsCountInPage = 20;
         int numPage = 1;

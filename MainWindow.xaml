@@ -11,7 +11,12 @@
         <Button x:Name="btnPrev" Content="Prev" HorizontalAlignment="Left" Margin="145,459,0,0" VerticalAlignment="Top" Height="30" Width="55" Click="btnPrev_Click" RenderTransformOrigin="0.727,3.501"/>
         <Button x:Name="btnNext" Content="Next" HorizontalAlignment="Left" Margin="625,459,0,0" VerticalAlignment="Top" Height="30" Width="55" Click="btnNext_Click"/>
         <Button x:Name="btnLast" Content="Last" HorizontalAlignment="Left" Margin="715,459,0,0" VerticalAlignment="Top" Height="30" Width="55" Click="btnLast_Click" RenderTransformOrigin="6.364,0.501"/>
-        <DataGrid x:Name="dataGrid" Margin="60,119,30,0" Height="320" VerticalAlignment="Top"/>
+        <DataGrid x:Name="dataGrid" Margin="60,119,30,0" Height="320"  IsReadOnly="True" VerticalAlignment="Top" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Id}" ClipboardContentBinding="{x:Null}" Header="id"/>
+                <DataGridTextColumn Binding="{Binding Name}" ClipboardContentBinding="{x:Null}" Header="Название"/>
+            </DataGrid.Columns>
+        </DataGrid>
         <Button x:Name="btnDownload" Content="Download" HorizontalAlignment="Left" Margin="120,74,0,0" VerticalAlignment="Top" Height="30" Width="80" Click="btnDownload_Click"/>
         <Button x:Name="btnView" Content="View" HorizontalAlignment="Left" Margin="400,74,0,0" VerticalAlignment="Top" Height="30" Width="80" Click="btnView_Click" RenderTransformOrigin="0.062,0.668"/>
         <Button x:Name="btnSave" Content="Save" HorizontalAlignment="Left" Margin="625,74,0,0" VerticalAlignment="Top" Height="30" Width="80" Click="btnSave_Click"/>

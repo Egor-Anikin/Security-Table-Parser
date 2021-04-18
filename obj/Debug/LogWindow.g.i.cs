@@ -49,7 +49,7 @@ namespace SecurityTableParser {
         #line hidden
         
         
-        #line 11 "..\..\LogWindow.xaml"
+        #line 16 "..\..\LogWindow.xaml"
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
         internal System.Windows.Controls.Button btnView;
         
@@ -92,7 +92,7 @@ namespace SecurityTableParser {
             case 2:
             this.btnView = ((System.Windows.Controls.Button)(target));
             
-            #line 11 "..\..\LogWindow.xaml"
+            #line 16 "..\..\LogWindow.xaml"
             this.btnView.Click += new System.Windows.RoutedEventHandler(this.btnView_Click);
             
             #line default
