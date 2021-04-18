@@ -65,7 +65,10 @@ namespace SecurityTableParser
             {
                 dataGrid.ItemsSource = records.GetRange((numPage - 1) * recordsCountInPage, recordsCountInPage);
             }
-            
+
+            label.Content = $"Список угроз безопасности({records.Count}):";
+
+
             pageInfo.Content = numPage + " / " + (records.Count / recordsCountInPage + 1);
         }
 
