@@ -67,9 +67,8 @@ namespace SecurityTableParser
             }
 
             label.Content = $"Список угроз безопасности({records.Count}):";
-
-
             pageInfo.Content = numPage + " / " + (records.Count / recordsCountInPage + 1);
+            btnLast.Content = (records.Count / recordsCountInPage + 1);
         }
 
         private void parseDataFromTxt()
@@ -204,10 +203,10 @@ namespace SecurityTableParser
                 return;
             }
 
-            MessageBox.Show($"Данные об угрозе:\n id: {record.Id};\n name: {record.Name};\n"
-                + $"description: {record.Description};\n source: {record.Source};\n "
-                + $"destination: {record.Destination};\n privacy violation: {record.PrivacyViolation};\n"
-                + $"integrity violation: {record.IntegrityViolation};\n access violation: {record.AccessViolation};\n");
+            MessageBox.Show($"Данные об угрозе:\n\nId: {record.Id};\n\nНаименование:\n{record.Name};\n\n"
+                + $"Описание:\n{record.Description};\n\nИсточник:\n{record.Source};\n "
+                + $"Объект воздействия угрозы:\n{record.Destination};\n\nНарушение конфиденциальности: {record.PrivacyViolation};\n\n"
+                + $"Нарушение целостности: {record.IntegrityViolation};\n\nНарушение доступности: {record.AccessViolation};");
 
         }
 
